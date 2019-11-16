@@ -48,6 +48,7 @@ function jsonToVideoData()
     foreach ($file_list as $file_name) {
         $data = getDataFromJsonFile($file_name);
         if (empty($data['aweme_list'])) {
+            unlink($file_name);
             continue;
         }
         foreach ($data['aweme_list'] as $aweme) {
