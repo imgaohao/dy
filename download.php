@@ -19,19 +19,21 @@ videoDataA();
 
 function videoDataA()
 {
-    $file_list = getFiles(DATA_VIDEO_A_DIR);
-    foreach ($file_list as $file_name) {
-        $content = file_get_contents($file_name);
-        $data = explode(PHP_EOL, $content);
-        $save_name = str_replace(DATA_VIDEO_EXT, '', $file_name);
-        $save_name = str_replace(DATA_VIDEO_A_DIR, '', $save_name);
-        $share_url = $data[0];
-        $video_url = !empty($data[1]) ? $data[1] : getVideoUrl($share_url);
+    set_time_limit(0);
+    while ($file_list = getFiles(DATA_VIDEO_A_DIR)) {
+        foreach ($file_list as $file_name) {
+            $content = file_get_contents($file_name);
+            $data = explode(PHP_EOL, $content);
+            $save_name = str_replace(DATA_VIDEO_EXT, '', $file_name);
+            $save_name = str_replace(DATA_VIDEO_A_DIR, '', $save_name);
+            $share_url = $data[0];
+            $video_url = !empty($data[1]) ? $data[1] : getVideoUrl($share_url);
 
-        if ($video_url) {
-            $result = saveVideoUrl($video_url, $save_name);
-            if ($result) {
-                rename($file_name, str_replace(DATA_VIDEO_A_DIR, DATA_VIDEO_B_DIR, $file_name));
+            if ($video_url) {
+                $result = saveVideoUrl($video_url, $save_name);
+                if ($result) {
+                    rename($file_name, str_replace(DATA_VIDEO_A_DIR, DATA_VIDEO_B_DIR, $file_name));
+                }
             }
         }
     }
@@ -72,6 +74,7 @@ function saveDataVideo($data_file, $share_url, $video_url)
 function getVideoUrl($share_url)
 {
     $html_content = getUrl($share_url);
+    sleep(1);
     preg_match('/playAddr:\s*"(.*?)"/', $html_content, $matches);
     return !empty($matches[1]) ? $matches[1] : '';
 }
